@@ -15,11 +15,11 @@ public class Worker {
 
             while(true){
                 // taskBag.printTasks();
-                taskId = taskBag.takePairTask("NextTask");
+                taskId = taskBag.pairInTask("NextTask");
             
-                task=taskBag.takePairData(taskId);
+                task = taskBag.pairInData(taskId);
                 result = getPrimeNumbers(task);
-                taskBag.placePairResult("result", result);
+                taskBag.pairOutResult("result", result);
                 Thread.sleep(3000);
                 System.out.println("Worker has finished a Task....");
             }

@@ -33,18 +33,18 @@ public class TaskBagImpl extends UnicastRemoteObject implements TaskBagInterface
 
     }
 
-    public synchronized void placePairData(int id, int[] value) throws RemoteException {
+    public synchronized void pairOutData(int id, int[] value) throws RemoteException {
         taskData.put(id, value);
     }
 
-    public synchronized void placePairTask(String key, int id) throws RemoteException {
+    public synchronized void pairOutTask(String key, int id) throws RemoteException {
         taskDescriptions.put(key, id);
         if (id > maxTaskId) {
             maxTaskId = id;
         }
     }
 
-    public synchronized void placePairResult(String key, int[] value) throws RemoteException {
+    public synchronized void pairOutResult(String key, int[] value) throws RemoteException {
         List<Integer> results = taskResults.getOrDefault(key, new ArrayList<Integer>());
         for (int num : value) {
             results.add(num);
@@ -52,12 +52,12 @@ public class TaskBagImpl extends UnicastRemoteObject implements TaskBagInterface
         taskResults.put(key, results);
     }
 
-    public synchronized int[] takePairData(int id) throws RemoteException {
+    public synchronized int[] pairInData(int id) throws RemoteException {
 
         return taskData.remove(id);
     }
 
-    public synchronized int takePairTask(String key) throws RemoteException {
+    public synchronized int pairInTask(String key) throws RemoteException {
         while (!taskDescriptions.containsKey("NextTask")) {
             try {
                 wait();
@@ -75,7 +75,7 @@ public class TaskBagImpl extends UnicastRemoteObject implements TaskBagInterface
         return taskId;
     }
 
-    public synchronized List<Integer> takePairResult(String key) throws RemoteException {
+    public synchronized List<Integer> pairInResult(String key) throws RemoteException {
         List<Integer> result = new ArrayList<>();
         for (String taskKey : taskResults.keySet()) {
             if (taskKey.endsWith(key)) {

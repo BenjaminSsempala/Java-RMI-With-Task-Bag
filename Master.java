@@ -9,31 +9,34 @@ public class Master {
             System.out.println("Master is booting....");
 
             Scanner sc = new Scanner(System.in);
+            System.out.println("Enter -1 to quit: ");
             System.out.println("Enter the Max value for Prime numbers: ");
             int max = sc.nextInt();
-            List batchTasks = getNumberRange(max);
-            List<Integer> results = new ArrayList<>();
+            while (max != -1) {
+                List batchTasks = getNumberRange(max);
+                List<Integer> results = new ArrayList<>();
 
-            TaskBagImpl taskBag = new TaskBagImpl();
+                TaskBagImpl taskBag = new TaskBagImpl();
 
-            Naming.rebind("taskBag", taskBag);
-            System.out.println("Master is ready....");
-            taskBag.placePairTask("NextTask", 0);
-            taskBag.placePairData(0, (int[]) batchTasks.get(0));
-            // for loop to insert each batch into the taskBag
-            for (int i = 1; i < batchTasks.size(); i++) {
-                taskBag.placePairTask("Task" + i, i);
-                taskBag.placePairData(i, (int[]) batchTasks.get(i));
-            }
-            while (true) {
-                Thread.sleep(5000);
-                List<Integer> result = taskBag.takePairResult("result");
-                results.addAll(result);
-                System.out.println("Master Results:");
-                for (int num : results) {
-                    System.out.print(num + " ");
+                Naming.rebind("taskBag", taskBag);
+                System.out.println("Master is ready....");
+                taskBag.pairOutTask("NextTask", 0);
+                taskBag.pairOutData(0, (int[]) batchTasks.get(0));
+                // for loop to insert each batch into the taskBag
+                for (int i = 1; i < batchTasks.size(); i++) {
+                    taskBag.pairOutTask("Task" + i, i);
+                    taskBag.pairOutData(i, (int[]) batchTasks.get(i));
                 }
-                System.out.println();
+                while (true) {
+                    Thread.sleep(5000);
+                    List<Integer> result = taskBag.pairInResult("result");
+                    results.addAll(result);
+                    System.out.println("Master Results:");
+                    for (int num : results) {
+                        System.out.print(num + " ");
+                    }
+                    System.out.println();
+                }
             }
         } catch (Exception e) {
 
@@ -59,14 +62,7 @@ public class Master {
             batches.add(batch);
         }
 
-        // Print the batches
-        // for (int[] batch : batches) {
-        // System.out.println("Batch:");
-        // for (int num : batch) {
-        // System.out.print(num + " ");
-        // }
-        // System.out.println();
-        // }
+        
 
         return batches;
     }
