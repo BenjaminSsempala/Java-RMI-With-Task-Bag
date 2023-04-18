@@ -1,6 +1,9 @@
 
 import java.util.*;
-import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.Naming;
 
 public class Master {
 
@@ -9,16 +12,19 @@ public class Master {
             System.out.println("Master is booting....");
 
             Scanner sc = new Scanner(System.in);
-            System.out.println("Enter -1 to quit: ");
-            System.out.println("Enter the Max value for Prime numbers: ");
-            int max = sc.nextInt();
+            int max = 0;
+
             while (max != -1) {
+                System.out.println("Enter -1 to quit: ");
+                System.out.println("Enter the Max value for Prime numbers: ");
+                max = sc.nextInt();
+
                 List batchTasks = getNumberRange(max);
                 List<Integer> results = new ArrayList<>();
 
                 TaskBagImpl taskBag = new TaskBagImpl();
-
                 Naming.rebind("taskBag", taskBag);
+
                 System.out.println("Master is ready....");
                 taskBag.pairOutTask("NextTask", 0);
                 taskBag.pairOutData(0, (int[]) batchTasks.get(0));
@@ -27,10 +33,17 @@ public class Master {
                     taskBag.pairOutTask("Task" + i, i);
                     taskBag.pairOutData(i, (int[]) batchTasks.get(i));
                 }
+
                 while (true) {
                     Thread.sleep(5000);
                     List<Integer> result = taskBag.pairInResult("result");
                     results.addAll(result);
+
+                    // break the loop if added result is null
+                    if (result.isEmpty()) {
+                        break;
+                    }
+
                     System.out.println("Master Results:");
                     for (int num : results) {
                         System.out.print(num + " ");
@@ -38,14 +51,15 @@ public class Master {
                     System.out.println();
                 }
             }
+            sc.close();
         } catch (Exception e) {
-
+            System.out.println("Exception in Master side" + e);
         }
     }
 
     public static List getNumberRange(int max) {
         int min = 1; // minimum number to process
-        int batchSize = 10; // size of each batch
+        int batchSize = 100; // size of each batch
 
         // Compute the number of batches required
         int numBatches = (int) Math.ceil((double) (max - min + 1) / batchSize);

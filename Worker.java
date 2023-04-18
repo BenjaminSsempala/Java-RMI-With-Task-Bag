@@ -1,8 +1,8 @@
 
 import java.util.*;
-
-import java.io.*;
-import java.rmi.*;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.Naming;
 
 public class Worker {
     public static void main(String args[]) {
@@ -13,8 +13,7 @@ public class Worker {
             
             TaskBagInterface taskBag = (TaskBagInterface) Naming.lookup("taskBag");
 
-            while(true){
-                // taskBag.printTasks();
+            while (true) {
                 taskId = taskBag.pairInTask("NextTask");
             
                 task = taskBag.pairInData(taskId);
@@ -25,7 +24,7 @@ public class Worker {
             }
             
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("Exception in worker side" + e);
         }
     }
 
