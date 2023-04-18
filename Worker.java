@@ -1,0 +1,59 @@
+
+import java.util.*;
+
+import java.io.*;
+import java.rmi.*;
+
+public class Worker {
+    public static void main(String args[]) {
+        try {
+            System.out.println("Worker is booting....");
+            int[] task,result;
+            int taskId;
+            
+            TaskBagInterface taskBag = (TaskBagInterface) Naming.lookup("taskBag");
+
+            while(true){
+                // taskBag.printTasks();
+                taskId = taskBag.takePairTask("NextTask");
+            
+                task=taskBag.takePairData(taskId);
+                result = getPrimeNumbers(task);
+                taskBag.placePairResult("result", result);
+                Thread.sleep(3000);
+                System.out.println("Worker has finished a Task....");
+            }
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
+    public static int[] getPrimeNumbers(int[] task) {
+    List<Integer> primeNumbersList = new ArrayList<>();
+    for (int i = 0; i < task.length; i++) {
+        if (isPrime(task[i])) {
+            primeNumbersList.add(task[i]);
+        }
+    }
+    int[] primeNumbersArray = new int[primeNumbersList.size()];
+    for (int i = 0; i < primeNumbersList.size(); i++) {
+        primeNumbersArray[i] = primeNumbersList.get(i);
+    }
+    return primeNumbersArray;
+}
+
+
+
+    public static boolean isPrime(int num) {
+        if (num <= 1) {
+            return false;
+        }
+        for (int i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
