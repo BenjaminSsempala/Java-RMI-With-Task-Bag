@@ -10,7 +10,7 @@ public class Worker {
             System.out.println("Worker is booting....");
             int[] task,result;
             int taskId;
-            
+
             TaskBagInterface taskBag = (TaskBagInterface) Naming.lookup("taskBag");
 
             while (true) {
@@ -19,12 +19,12 @@ public class Worker {
                 task = taskBag.pairInData(taskId);
                 result = getPrimeNumbers(task);
                 taskBag.pairOutResult("result", result);
-                Thread.sleep(3000);
+                Thread.sleep(2000);
                 System.out.println("Worker has finished a Task....");
             }
             
         } catch (Exception e) {
-            System.out.println("Exception in worker side" + e);
+            System.out.println("No more tasks");
         }
     }
 

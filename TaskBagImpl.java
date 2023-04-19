@@ -58,21 +58,22 @@ public class TaskBagImpl extends UnicastRemoteObject implements TaskBagInterface
     }
 
     public synchronized int pairInTask(String key) throws RemoteException {
-        while (!taskDescriptions.containsKey("NextTask")) {
+        while (taskDescriptions.containsKey("NextTask")) {
             try {
-                wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        int taskId = taskDescriptions.remove(key);
+                int taskId = taskDescriptions.remove(key);
         if (taskId < maxTaskId) {
             taskDescriptions.put("NextTask", taskId + 1);
             taskDescriptions.remove("Task" + (taskId + 1));
         }
 
         return taskId;
+               
+            } catch (Exception e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        return -1;
+        
     }
 
     public synchronized List<Integer> pairInResult(String key) throws RemoteException {

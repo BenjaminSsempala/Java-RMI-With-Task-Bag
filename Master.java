@@ -59,7 +59,7 @@ public class Master {
 
     public static List getNumberRange(int max) {
         int min = 1; // minimum number to process
-        int batchSize = 100; // size of each batch
+        int batchSize = 10; // size of each batch
 
         // Compute the number of batches required
         int numBatches = (int) Math.ceil((double) (max - min + 1) / batchSize);
